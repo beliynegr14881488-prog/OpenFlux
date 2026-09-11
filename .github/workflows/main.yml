@@ -30,6 +30,13 @@ jobs:
         run: |
           sdkmanager --install "ndk;26.1.10909125"
 
+      - name: Fix Darwin/Linux NDK Path Bug
+        run: |
+          # Создаем костыль-ссылку: подменяем darwin-x86_64 на linux-x86_64
+          NDK_PATH="${ANDROID_HOME}/ndk/26.1.10909125/toolchains/llvm/prebuilt"
+          mkdir -p "$NDK_PATH"
+          ln -s "$NDK_PATH/linux-x86_64" "$NDK_PATH/darwin-x86_64"
+
       - name: Make build script executable
         run: chmod +x ./build_android.sh
 
@@ -53,5 +60,6 @@ jobs:
             ./**/bin/
             ./**/out/
             ./**/release/
+            ./openflux*
           if-no-files-found: warn
           
