@@ -1,0 +1,45 @@
+name: Build Android Binaries
+
+on:
+  workflow_dispatch: # Позволяет запускать сборку вручную одной кнопкой
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22' # Укажи нужную версию Go, если требуется новее
+
+      - name: Set up Android NDK
+        uses: nsetup/setup-android-ndk@v1
+        with:
+          ndk-version: r26b # Стабильная версия NDK
+
+      - name: Make build script executable
+        run: chmod +x ./build_android.sh
+
+      - name: Run Android Build Script
+        env:
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        run: |
+          ./build_android.sh
+
+      - name: Upload Built Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: openflux-android-build
+          path: |
+            *.so
+            *.aar
+            build/
+            bin/
+          if-no-files-found: warn
+          
