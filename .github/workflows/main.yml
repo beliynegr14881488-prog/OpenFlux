@@ -40,18 +40,18 @@ jobs:
         run: |
           export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
           export CGO_ENABLED=1
-          # Запускаем скрипт и сохраняем вывод
-          ./build_android.sh || true
+          ./build_android.sh
 
       - name: Upload Built Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: openflux-android-build
           path: |
-            *.so
-            *.aar
-            build/
-            bin/
-            openflux*
+            ./**/*.so
+            ./**/*.aar
+            ./**/*.apk
+            ./**/bin/
+            ./**/out/
+            ./**/release/
           if-no-files-found: warn
           
